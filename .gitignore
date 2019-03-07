@@ -1,3 +1,5 @@
 node_modules
 npm-debug.log
-dist
+wp-content/themes/*/mix-manifest.json
+wp-content/themes/*/assets
+.env
