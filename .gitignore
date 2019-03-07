@@ -3,3 +3,4 @@ npm-debug.log
 wp-content/themes/*/mix-manifest.json
 wp-content/themes/*/assets
 .env
+.idea/
