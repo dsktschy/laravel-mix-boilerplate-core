@@ -19,30 +19,32 @@ const svgDummyModuleName = 'assets/js/.svg-dummy-module'
 // 2. Edit wp-content/themes/input-theme-name/style.css
 // 3. Replace 'input-theme-name' in following line to your theme name
 const themeName = 'input-theme-name'
-// 4. Rename following directories to same name as this variable
+// 4. Replace 'wp-content/themes' in following line to your 'themes' directory path from project root
+const themesPath = 'wp-content/themes'
+// 5. Rename following directories to same name as this variable
 //   resources/themes/input-theme-name
 //   wp-content/themes/input-theme-name
 
 // Clean output directory
-fs.removeSync(`wp/wp-content/themes/${themeName}/assets`)
+fs.removeSync(`${themesPath}/${themeName}/assets`)
 
 mix
   // Set output directory of mix-manifest.json
-  .setPublicPath(`wp/wp-content/themes/${themeName}`)
+  .setPublicPath(`${themesPath}/${themeName}`)
   .version()
   .js(
     `resources/themes/${themeName}/assets/js/app.js`,
-    `wp/wp-content/themes/${themeName}/assets/js`
+    `${themesPath}/${themeName}/assets/js`
   )
   .eslint()
   .sass(
     `resources/themes/${themeName}/assets/css/app.scss`,
-    `wp/wp-content/themes/${themeName}/assets/css`
+    `${themesPath}/${themeName}/assets/css`
   )
   .stylelint()
   .copyWatched(
     `resources/themes/${themeName}/assets/images/**/*.{jpg,jpeg,png,gif}`,
-    `wp/wp-content/themes/${themeName}/assets/images`,
+    `${themesPath}/${themeName}/assets/images`,
     { base: `resources/themes/${themeName}/assets/images` }
   )
   .webpackConfig({
@@ -103,7 +105,7 @@ if (process.env.NODE_ENV === "production") {
     // Execute imagemin for each file in loop
     // Because imagemin can't keep hierarchical structure
     const targets = globby.sync(
-      `wp/wp-content/themes/${themeName}/assets/images/**/*.{jpg,jpeg,png,gif}`,
+      `${themesPath}/${themeName}/assets/images/**/*.{jpg,jpeg,png,gif}`,
       { onlyFiles: true }
     )
     for (let target of targets) {
@@ -117,8 +119,8 @@ if (process.env.NODE_ENV === "production") {
       }).catch(error => { throw error })
     }
     // In production, delete chunk file for SVG sprite
-    fs.removeSync(`wp/wp-content/themes/${themeName}/${svgDummyModuleName}.js`)
-    const pathToManifest = `wp/wp-content/themes/${themeName}/mix-manifest.json`
+    fs.removeSync(`${themesPath}/${themeName}/${svgDummyModuleName}.js`)
+    const pathToManifest = `${themesPath}/${themeName}/mix-manifest.json`
     const manifest = require(`./${pathToManifest}`)
     delete manifest[`/${svgDummyModuleName}.js`]
     fs.writeFileSync(path.resolve(pathToManifest), JSON.stringify(manifest), 'utf-8')
@@ -147,8 +149,8 @@ else {
       // injection of changes such as CSS will be not available
       // https://github.com/JeffreyWay/laravel-mix/issues/1053
       files: [
-        `wp/wp-content/themes/${themeName}/assets/**/*`,
-        `wp/wp-content/themes/${themeName}/**/*.php`
+        `${themesPath}/${themeName}/assets/**/*`,
+        `${themesPath}/${themeName}/**/*.php`
       ]
     }
     const cert = process.env.BROWSER_SYNC_HTTPS_CERT
