@@ -40,18 +40,21 @@ if (!function_exists('mix')) {
     // Return value retrieved from mix-manifest.json
     $manifestPath =
       get_stylesheet_directory() . $manifestDirectory . '/mix-manifest.json';
-    if (!isset($manifests[$manifestPath])) {
-      if (!file_exists($manifestPath)) {
-        throw new Exception("The Mix manifest doesn't exist: {$manifestPath}");
-      }
+    // If mix-manifest.json doesn't exist, return path as it is.
+    if (!file_exists($manifestPath)) {
+      return $path;
+    } else {
       $manifests[$manifestPath] =
         json_decode(file_get_contents($manifestPath), true);
+      $manifest = $manifests[$manifestPath];
+      // If the file doesn't exist, return path as it is.
+      if (!isset($manifest[$path])) {
+        $result = $path;
+      } else {
+        $result = $manifestDirectory . $manifest[$path];
+        $result = htmlspecialchars($result, ENT_QUOTES, 'UTF-8');
+      }
+      return $result;
     }
-    $manifest = $manifests[$manifestPath];
-    if (!isset($manifest[$path])) {
-      throw new Exception("Unable to locate Mix file: {$path}.");
-    }
-    $result = $manifestDirectory . $manifest[$path];
-    return htmlspecialchars($result, ENT_QUOTES, 'UTF-8');
   }
 }
